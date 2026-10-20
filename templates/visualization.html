@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Visualization{% endblock %}
+{% block description %}Visualisasi data interaktif TrainSight: Scatter Plot, Garis Regresi Linear, Actual vs Predicted, dan Distribusi Dataset.{% endblock %}
+
+{% block content %}
+
+<section class="ts-page-header">
+    <div class="container-xl">
+        <div class="page-header-inner">
+            <div class="ph-content">
+                <span class="section-badge">
+                    <i class="bi bi-bar-chart-line me-2"></i>Data Analytics
+                </span>
+                <h1 class="page-title">Data Visualization</h1>
+                <p class="page-desc">Visualisasi interaktif dari dataset dan model Regresi Linear.</p>
+            </div>
+            <div class="ph-deco" aria-hidden="true">
+                <div class="ph-deco-icon">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                </div>
+                <div class="ph-deco-label">Visualize</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ts-section">
+    <div class="container-xl">
+
+        <!-- Row 1: Scatter + Regression -->
+        <div class="row g-4 mb-4">
+
+            <!-- Chart 1: Scatter Plot -->
+            <div class="col-lg-6">
+                <div class="ts-chart-card h-100">
+                    <div class="chart-card-header">
+                        <h5><i class="bi bi-scatter-chart me-2 text-info"></i>Scatter Plot — Dataset Size vs Training Time</h5>
+                    </div>
+                    <canvas id="scatterChart" height="280"></canvas>
+                    <p class="chart-note mt-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Setiap titik mewakili satu entri data aktual. Sumbu X = ukuran dataset (MB),
+                        Sumbu Y = waktu training (menit).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Chart 2: Regression Line -->
+            <div class="col-lg-6">
+                <div class="ts-chart-card h-100">
+                    <div class="chart-card-header">
+                        <h5><i class="bi bi-graph-up me-2 text-cyan"></i>Garis Regresi Linear</h5>
+                    </div>
+                    <canvas id="regressionChart" height="280"></canvas>
+                    <p class="chart-note mt-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Titik-titik biru = data aktual. Garis cyan = garis regresi linear yang dihasilkan model.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Actual vs Predicted + Distribution -->
+        <div class="row g-4">
+
+            <!-- Chart 3: Actual vs Predicted -->
+            <div class="col-lg-6">
+                <div class="ts-chart-card h-100">
+                    <div class="chart-card-header">
+                        <h5><i class="bi bi-arrow-left-right me-2 text-warning"></i>Actual vs Predicted (Test Set)</h5>
+                    </div>
+                    <canvas id="actualPredChart" height="280"></canvas>
+                    <p class="chart-note mt-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Sumbu X = Waktu Training Aktual, Sumbu Y = Waktu Training Prediksi.
+                        Garis merah = garis ideal (prediksi sempurna).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Chart 4: Distribution -->
+            <div class="col-lg-6">
+                <div class="ts-chart-card h-100">
+                    <div class="chart-card-header">
+                        <h5><i class="bi bi-bar-chart me-2 text-purple"></i>Distribusi Dataset</h5>
+                    </div>
+                    <canvas id="distChart" height="280"></canvas>
+                    <p class="chart-note mt-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Distribusi ukuran dataset (MB) dalam bentuk histogram. Menunjukkan sebaran data.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    // Data from Flask
+    const scatterX = {{ chart.scatter_x | tojson }};
+    const scatterY = {{ chart.scatter_y | tojson }};
+    const yTest    = {{ chart.y_test | tojson }};
+    const yPred    = {{ chart.y_pred | tojson }};
+    const coef     = {{ chart.coef }};
+    const intercept = {{ chart.intercept }};
+    const xMin     = {{ chart.x_min }};
+    const xMax     = {{ chart.x_max }};
+
+    // Theme defaults — light theme
+    Chart.defaults.color = '#475569';
+    Chart.defaults.font.family = 'Plus Jakarta Sans';
+    Chart.defaults.font.size = 12;
+
+    // Shared grid/tick config helper
+    const axisStyle = (label) => ({
+        title: { display: true, text: label, color: '#475569', font: { weight: '600', size: 11 } },
+        ticks: { color: '#64748B', font: { size: 11 } },
+        grid:  { color: 'rgba(79,70,229,0.07)', lineWidth: 1 },
+        border: { color: 'rgba(79,70,229,0.20)', width: 1.5 }
+    });
+
+    const legendStyle = { labels: { color: '#0F172A', font: { weight: '600' }, padding: 16 } };
+
+    // Shared layout padding — mencegah titik keluar border card
+    const layoutPad = { layout: { padding: { top: 4, right: 8, bottom: 4, left: 4 } } };
+
+    new Chart(document.getElementById('scatterChart'), {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Data Aktual',
+                data: scatterX.map((x, i) => ({ x, y: scatterY[i] })),
+                backgroundColor: 'rgba(79,70,229,0.45)',
+                borderColor: 'rgba(79,70,229,0.85)',
+                borderWidth: 1.5,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            ...layoutPad,
+            plugins: {
+                legend: legendStyle,
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    callbacks: {
+                        label: ctx => `(${ctx.parsed.x.toFixed(1)} MB, ${ctx.parsed.y.toFixed(2)} min)`
+                    }
+                }
+            },
+            scales: {
+                x: axisStyle('Dataset Size (MB)'),
+                y: axisStyle('Training Time (Minutes)')
+            }
+        }
+    });
+
+    // ─── Chart 2: Regression Line ────────────────────────────
+    const lineXpts = [xMin, xMax];
+    const lineYpts = lineXpts.map(x => intercept + coef * x);
+
+    new Chart(document.getElementById('regressionChart'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Data Aktual',
+                    data: scatterX.map((x, i) => ({ x, y: scatterY[i] })),
+                    backgroundColor: 'rgba(79,70,229,0.40)',
+                    borderColor: 'rgba(79,70,229,0.7)',
+                    borderWidth: 1.5,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    order: 2,
+                },
+                {
+                    label: 'Garis Regresi',
+                    data: lineXpts.map((x, i) => ({ x, y: lineYpts[i] })),
+                    type: 'line',
+                    borderColor: '#06B6D4',
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: legendStyle,
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    callbacks: {
+                        label: ctx => `(${ctx.parsed.x.toFixed(1)} MB, ${ctx.parsed.y.toFixed(2)} min)`
+                    }
+                }
+            },
+            scales: {
+                x: axisStyle('Dataset Size (MB)'),
+                y: axisStyle('Training Time (Minutes)')
+            }
+        }
+    });
+
+    // ─── Chart 3: Actual vs Predicted ────────────────────────
+    const allVals   = [...yTest, ...yPred];
+    const lineMin   = Math.min(...allVals);
+    const lineMax   = Math.max(...allVals);
+
+    new Chart(document.getElementById('actualPredChart'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Actual vs Predicted',
+                    data: yTest.map((y, i) => ({ x: y, y: yPred[i] })),
+                    backgroundColor: 'rgba(245,158,11,0.55)',
+                    borderColor: 'rgba(245,158,11,0.9)',
+                    borderWidth: 1.5,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    order: 2,
+                },
+                {
+                    label: 'Garis Ideal',
+                    data: [{ x: lineMin, y: lineMin }, { x: lineMax, y: lineMax }],
+                    type: 'line',
+                    borderColor: '#EF4444',
+                    borderWidth: 2.5,
+                    borderDash: [7, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: legendStyle,
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    callbacks: {
+                        label: ctx => `Actual: ${ctx.parsed.x.toFixed(2)} | Pred: ${ctx.parsed.y.toFixed(2)}`
+                    }
+                }
+            },
+            scales: {
+                x: axisStyle('Actual Training Time (Minutes)'),
+                y: axisStyle('Predicted Training Time (Minutes)')
+            }
+        }
+    });
+
+    // ─── Chart 4: Histogram Distribution ─────────────────────
+    function makeHistogram(data, bins) {
+        const mn = Math.min(...data);
+        const mx = Math.max(...data);
+        const step = (mx - mn) / bins;
+        const counts = Array(bins).fill(0);
+        const labels = [];
+        for (let i = 0; i < bins; i++) {
+            labels.push(`${(mn + i * step).toFixed(0)}–${(mn + (i + 1) * step).toFixed(0)}`);
+        }
+        data.forEach(v => {
+            let idx = Math.floor((v - mn) / step);
+            if (idx >= bins) idx = bins - 1;
+            counts[idx]++;
+        });
+        return { labels, counts };
+    }
+
+    const hist = makeHistogram(scatterX, 12);
+
+    new Chart(document.getElementById('distChart'), {
+        type: 'bar',
+        data: {
+            labels: hist.labels,
+            datasets: [{
+                label: 'Frekuensi',
+                data: hist.counts,
+                backgroundColor: 'rgba(124,58,237,0.55)',
+                borderColor: 'rgba(124,58,237,1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: legendStyle,
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                }
+            },
+            scales: {
+                x: {
+                    ...axisStyle('Dataset Size Range (MB)'),
+                    ticks: { color: '#64748B', font: { size: 10 }, maxRotation: 45 }
+                },
+                y: axisStyle('Frequency')
+            }
+        }
+    });
+
+})();
+</script>
+{% endblock %}

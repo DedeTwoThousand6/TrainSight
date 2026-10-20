@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Model Evaluation{% endblock %}
+{% block description %}Evaluasi performa model Regresi Linear TrainSight: MAE, MSE, RMSE, dan R² Score.{% endblock %}
+
+{% block content %}
+
+<section class="ts-page-header">
+    <div class="container-xl">
+        <div class="page-header-inner">
+            <div class="ph-content">
+                <span class="section-badge">
+                    <i class="bi bi-graph-up-arrow me-2"></i>Performance Metrics
+                </span>
+                <h1 class="page-title">Model Evaluation</h1>
+                <p class="page-desc">Hasil evaluasi performa model Regresi Linear berdasarkan data testing.</p>
+            </div>
+            <div class="ph-deco" aria-hidden="true">
+                <div class="ph-deco-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <div class="ph-deco-label">Evaluate</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ts-section">
+    <div class="container-xl">
+
+        <!-- ===== METRIC CARDS ===== -->
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">MODEL PERFORMANCE</h2>
+            <p class="section-desc">Metrik dihitung dari data testing (30% dari total data).</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- MAE -->
+            <div class="col-6 col-md-3">
+                <div class="ts-metric-card ts-metric-blue">
+                    <div class="metric-icon">
+                        <i class="bi bi-rulers"></i>
+                    </div>
+                    <div class="metric-value">{{ eval_data.mae }}</div>
+                    <div class="metric-name">MAE</div>
+                    <div class="metric-fullname">Mean Absolute Error</div>
+                    <div class="metric-unit">minutes</div>
+                </div>
+            </div>
+            <!-- MSE -->
+            <div class="col-6 col-md-3">
+                <div class="ts-metric-card ts-metric-cyan">
+                    <div class="metric-icon">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <div class="metric-value">{{ eval_data.mse }}</div>
+                    <div class="metric-name">MSE</div>
+                    <div class="metric-fullname">Mean Squared Error</div>
+                    <div class="metric-unit">minutes²</div>
+                </div>
+            </div>
+            <!-- RMSE -->
+            <div class="col-6 col-md-3">
+                <div class="ts-metric-card ts-metric-purple">
+                    <div class="metric-icon">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <div class="metric-value">{{ eval_data.rmse }}</div>
+                    <div class="metric-name">RMSE</div>
+                    <div class="metric-fullname">Root Mean Squared Error</div>
+                    <div class="metric-unit">minutes</div>
+                </div>
+            </div>
+            <!-- R² -->
+            <div class="col-6 col-md-3">
+                <div class="ts-metric-card ts-metric-green">
+                    <div class="metric-icon">
+                        <i class="bi bi-patch-check"></i>
+                    </div>
+                    <div class="metric-value">{{ eval_data.r2 }}</div>
+                    <div class="metric-name">R² Score</div>
+                    <div class="metric-fullname">Coefficient of Determination</div>
+                    <div class="metric-unit">0–1 scale</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ADDITIONAL INFO ===== -->
+        <div class="row g-4">
+
+            <!-- Model Parameters -->
+            <div class="col-lg-6">
+                <div class="ts-eval-card h-100">
+                    <div class="eval-card-header">
+                        <i class="bi bi-sliders me-2"></i>Model Parameters
+                    </div>
+                    <table class="ts-eval-table">
+                        <tr>
+                            <td>Training Samples</td>
+                            <td><strong>{{ eval_data.train_size }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Testing Samples</td>
+                            <td><strong>{{ eval_data.test_size }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Intercept (a)</td>
+                            <td><strong>{{ eval_data.intercept }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Coefficient (b)</td>
+                            <td><strong>{{ eval_data.coefficient }}</strong></td>
+                        </tr>
+                    </table>
+
+                    <!-- Regression Equation -->
+                    <div class="ts-formula-box mt-4">
+                        <span class="formula-label">Persamaan Regresi Linear:</span>
+                        <span class="formula">Y = {{ eval_data.intercept }} + {{ eval_data.coefficient }}X</span>
+                        <div class="formula-vars mt-2">
+                            <span><strong>Y</strong> = Training Time (minutes)</span>
+                            <span><strong>X</strong> = Dataset Size (MB)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interpretation -->
+            <div class="col-lg-6">
+                <div class="ts-eval-card h-100">
+                    <div class="eval-card-header">
+                        <i class="bi bi-book me-2"></i>Interpretasi Hasil Evaluasi
+                    </div>
+                    <div class="interp-item">
+                        <div class="interp-badge interp-blue">MAE</div>
+                        <div>
+                            Rata-rata, model membuat kesalahan prediksi sekitar
+                            <strong>{{ eval_data.mae }} menit</strong>.
+                            Nilai ini mudah dipahami karena memiliki satuan yang sama dengan target.
+                        </div>
+                    </div>
+                    <div class="interp-item">
+                        <div class="interp-badge interp-cyan">MSE</div>
+                        <div>
+                            MSE lebih besar dari MAE karena kesalahan dikuadratkan.
+                            Nilai ini sensitif terhadap outlier (kesalahan besar dihukum lebih berat).
+                        </div>
+                    </div>
+                    <div class="interp-item">
+                        <div class="interp-badge interp-purple">RMSE</div>
+                        <div>
+                            RMSE adalah akar dari MSE, satuannya sama dengan target (menit).
+                            Model rata-rata meleset sekitar <strong>{{ eval_data.rmse }} menit</strong>.
+                        </div>
+                    </div>
+                    <div class="interp-item">
+                        <div class="interp-badge interp-green">R²</div>
+                        <div>
+                            R² = <strong>{{ eval_data.r2 }}</strong> berarti model mampu menjelaskan
+                            <strong>{{ (eval_data.r2 * 100) | round(2) if eval_data.r2 != '–' else '–' }}%</strong>
+                            variansi waktu training dalam data.
+                            Nilai mendekati 1 menunjukkan kemampuan model yang sangat baik.
+                            <br><small class="text-muted mt-1 d-block">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                Catatan: R² <em>bukan</em> persentase akurasi prediksi — keduanya
+                                memiliki makna yang berbeda.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== METRIC DESCRIPTIONS ===== -->
+        <div class="row g-4 mt-2">
+            <div class="col-12">
+                <div class="ts-tips-card">
+                    <h5 class="mb-4"><i class="bi bi-info-circle-fill me-2 text-info"></i>Penjelasan Metrik</h5>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="metric-desc-item">
+                                <div class="metric-desc-badge metric-desc-blue">MAE</div>
+                                <h6>Mean Absolute Error</h6>
+                                <p>Rata-rata selisih absolut antara nilai aktual dan prediksi.
+                                   Semakin kecil, semakin baik.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="metric-desc-item">
+                                <div class="metric-desc-badge metric-desc-cyan">MSE</div>
+                                <h6>Mean Squared Error</h6>
+                                <p>Rata-rata kuadrat selisih antara nilai aktual dan prediksi.
+                                   Lebih sensitif terhadap outlier.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="metric-desc-item">
+                                <div class="metric-desc-badge metric-desc-purple">RMSE</div>
+                                <h6>Root Mean Squared Error</h6>
+                                <p>Akar dari MSE. Memiliki satuan yang sama dengan variabel target (menit).</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="metric-desc-item">
+                                <div class="metric-desc-badge metric-desc-green">R²</div>
+                                <h6>Coefficient of Determination</h6>
+                                <p>Proporsi variansi y yang dapat dijelaskan oleh model.
+                                   Nilai mendekati 1 berarti model sangat baik.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset{% endblock %}
+{% block description %}Dataset lengkap yang digunakan dalam penelitian TrainSight: Training Data vs Training Time.{% endblock %}
+
+{% block content %}
+
+<section class="ts-page-header">
+    <div class="container-xl">
+        <div class="page-header-inner">
+            <div class="ph-content">
+                <span class="section-badge">
+                    <i class="bi bi-table me-2"></i>Data Explorer
+                </span>
+                <h1 class="page-title">Dataset</h1>
+                <p class="page-desc">Dataset yang digunakan dalam penelitian, setelah proses preprocessing.</p>
+            </div>
+            <div class="ph-deco" aria-hidden="true">
+                <div class="ph-deco-icon">
+                    <i class="bi bi-database-fill"></i>
+                </div>
+                <div class="ph-deco-label">300 Records</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ts-section">
+    <div class="container-xl">
+
+        <!-- ===== STAT CHIPS ===== -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Total Data</div>
+                    <div class="ds-chip-val">{{ stats.total }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Min Size (MB)</div>
+                    <div class="ds-chip-val">{{ stats.x_min }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Max Size (MB)</div>
+                    <div class="ds-chip-val">{{ stats.x_max }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Avg Size (MB)</div>
+                    <div class="ds-chip-val">{{ stats.x_mean }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Min Time (min)</div>
+                    <div class="ds-chip-val">{{ stats.y_min }}</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="ds-stat-chip">
+                    <div class="ds-chip-label">Avg Time (min)</div>
+                    <div class="ds-chip-val">{{ stats.y_mean }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SEARCH + TABLE ===== -->
+        <div class="ts-dataset-card">
+            <div class="dataset-card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h5 class="mb-0">
+                        <i class="bi bi-table me-2"></i>Training Data vs Training Time
+                    </h5>
+                    <small class="text-muted">{{ stats.total }} records · Preprocessed</small>
+                </div>
+                <div class="ds-search-wrap">
+                    <i class="bi bi-search ds-search-icon"></i>
+                    <input type="text" id="dsSearch" class="ds-search-input" placeholder="Search dataset...">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="ts-table" id="dsTable">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">#</th>
+                            <th>Dataset Size (MB)</th>
+                            <th>Training Time (Minutes)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dsBody">
+                        {% for row in rows %}
+                        <tr>
+                            <td class="text-muted">{{ loop.index }}</td>
+                            <td>{{ row.training_data_size_mb }}</td>
+                            <td>{{ row.training_time_minutes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="ds-pagination d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                <div id="dsInfo" class="ds-info-text"></div>
+                <div class="d-flex gap-2 align-items-center">
+                    <button class="btn ts-btn-page" id="btnPrev" onclick="changePage(-1)">
+                        <i class="bi bi-chevron-left"></i> Prev
+                    </button>
+                    <span id="dsPageNum" class="ds-page-label"></span>
+                    <button class="btn ts-btn-page" id="btnNext" onclick="changePage(1)">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    const PER_PAGE = 15;
+    let currentPage = 1;
+    let filteredRows = [];
+
+    const tbody  = document.getElementById('dsBody');
+    const search = document.getElementById('dsSearch');
+    const info   = document.getElementById('dsInfo');
+    const pageNum = document.getElementById('dsPageNum');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+
+    // Collect all rows data
+    const allRows = Array.from(tbody.querySelectorAll('tr')).map(tr => ({
+        el: tr,
+        text: tr.textContent.toLowerCase()
+    }));
+
+    function render() {
+        filteredRows = allRows.filter(r => r.text.includes(search.value.toLowerCase()));
+        const total = filteredRows.length;
+        const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+        if (currentPage > pages) currentPage = pages;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const end   = Math.min(start + PER_PAGE, total);
+
+        // Hide all, show slice
+        allRows.forEach(r => r.el.style.display = 'none');
+        filteredRows.slice(start, end).forEach(r => r.el.style.display = '');
+
+        info.textContent = `Showing ${start + 1}–${end} of ${total} records`;
+        pageNum.textContent = `Page ${currentPage} / ${pages}`;
+        btnPrev.disabled = currentPage <= 1;
+        btnNext.disabled = currentPage >= pages;
+    }
+
+    window.changePage = function (dir) {
+        currentPage += dir;
+        render();
+    };
+
+    search.addEventListener('input', () => {
+        currentPage = 1;
+        render();
+    });
+
+    render();
+})();
+</script>
+{% endblock %}

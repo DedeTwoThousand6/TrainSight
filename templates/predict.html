@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction{% endblock %}
+{% block description %}Masukkan ukuran dataset dan dapatkan estimasi waktu training menggunakan model Regresi Linear TrainSight.{% endblock %}
+
+{% block content %}
+
+<section class="ts-page-header">
+    <div class="container-xl">
+        <div class="page-header-inner">
+            <div class="ph-content">
+                <span class="section-badge">
+                    <i class="bi bi-lightning-charge me-2"></i>Core Feature
+                </span>
+                <h1 class="page-title">Training Time Prediction</h1>
+                <p class="page-desc">Masukkan ukuran dataset (MB) untuk mendapatkan estimasi waktu training.</p>
+            </div>
+            <div class="ph-deco" aria-hidden="true">
+                <div class="ph-deco-icon">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <div class="ph-deco-label">Predict</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ts-section">
+    <div class="container-xl">
+
+        {% if not model_loaded %}
+        <div class="alert ts-alert-danger mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Model belum dimuat.</strong> Jalankan <code>python train_model.py</code> terlebih dahulu.
+        </div>
+        {% endif %}
+
+        <div class="row g-5 align-items-start">
+
+            <!-- ===== FORM PANEL ===== -->
+            <div class="col-lg-5">
+                <div class="ts-predict-card">
+                    <div class="predict-card-header">
+                        <div class="predict-icon">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">Dataset Size Input</h3>
+                            <small class="text-muted">Linear Regression Model</small>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="/predict" id="predictForm" novalidate>
+
+                        <div class="mb-4">
+                            <label for="dataset_size" class="ts-label">
+                                <i class="bi bi-database me-2"></i>Dataset Size (MB)
+                            </label>
+                            <div class="ts-input-group">
+                                <input
+                                    type="number"
+                                    id="dataset_size"
+                                    name="dataset_size"
+                                    class="ts-input {% if error %}ts-input-error{% endif %}"
+                                    placeholder="e.g., 1500"
+                                    value="{{ input_val }}"
+                                    min="0.001"
+                                    step="any"
+                                    required
+                                    {% if not model_loaded %}disabled{% endif %}
+                                >
+                                <span class="ts-input-unit">MB</span>
+                            </div>
+                            <div class="ts-input-hint">
+                                Masukkan ukuran dataset dalam satuan Megabyte. Contoh: 500, 1500, 3000
+                            </div>
+                        </div>
+
+                        <!-- Error -->
+                        {% if error %}
+                        <div class="ts-alert-box ts-alert-error mb-4" id="errorBox">
+                            <i class="bi bi-x-circle-fill me-2"></i>{{ error }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Warning (out of range) -->
+                        {% if warning %}
+                        <div class="ts-alert-box ts-alert-warning mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ warning }}
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn ts-btn-predict-full" id="predictBtn"
+                                {% if not model_loaded %}disabled{% endif %}>
+                            <span class="btn-text">
+                                <i class="bi bi-play-fill me-2"></i>Predict Training Time
+                            </span>
+                            <span class="btn-loading d-none">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Processing...
+                            </span>
+                        </button>
+                    </form>
+
+                    <!-- Model info chips -->
+                    <div class="predict-model-info mt-4">
+                        <div class="model-chip">
+                            <i class="bi bi-graph-up me-1"></i>Linear Regression
+                        </div>
+                        <div class="model-chip">
+                            <i class="bi bi-shield-check me-1"></i>Scikit-learn
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== RESULT PANEL ===== -->
+            <div class="col-lg-7">
+
+                {% if result %}
+                <!-- Result Card -->
+                <div class="ts-result-card mb-4" id="resultCard">
+                    <div class="result-header">
+                        <i class="bi bi-clock-fill me-2"></i>
+                        Estimated Training Time
+                    </div>
+
+                    <div class="result-time-display">
+                        <span class="result-minutes">{{ result.pred_minutes }}</span>
+                        <span class="result-unit">Minutes</span>
+                    </div>
+
+                    {% if result.hours > 0 %}
+                    <div class="result-conversion">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        <strong>{{ result.hours }}</strong> Hour{{ 's' if result.hours != 1 else '' }}
+                        &nbsp;<strong>{{ result.minutes_rem }}</strong> Minutes
+                    </div>
+                    {% else %}
+                    <div class="result-conversion">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        <strong>{{ result.minutes_rem }}</strong> Minutes
+                    </div>
+                    {% endif %}
+
+                    <div class="result-details mt-4">
+                        <div class="result-detail-row">
+                            <span class="rd-label"><i class="bi bi-database me-2"></i>Dataset Size</span>
+                            <span class="rd-value">{{ result.dataset_size }} MB</span>
+                        </div>
+                        <div class="result-detail-row">
+                            <span class="rd-label"><i class="bi bi-clock me-2"></i>Predicted Time</span>
+                            <span class="rd-value">{{ result.pred_minutes }} minutes</span>
+                        </div>
+                        <div class="result-detail-row">
+                            <span class="rd-label"><i class="bi bi-cpu me-2"></i>Model Used</span>
+                            <span class="rd-value">Linear Regression</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Scatter Chart with Prediction Point -->
+                <div class="ts-chart-card">
+                    <div class="chart-card-header">
+                        <h5><i class="bi bi-scatter-chart me-2"></i>Prediction on Regression Line</h5>
+                    </div>
+                    <canvas id="predChart" height="260"></canvas>
+                </div>
+
+                {% else %}
+                <!-- Placeholder when no result yet -->
+                <div class="ts-empty-result">
+                    <dotlottie-wc
+                        src="https://lottie.host/f7b8437a-71c8-4fbb-bc31-9fd3cf267f0c/jNM5llrm7c.lottie"
+                        style="width: 260px; height: 220px;"
+                        autoplay loop>
+                    </dotlottie-wc>
+                    <h4 class="mt-3">Siap untuk Memprediksi</h4>
+                    <p>Masukkan ukuran dataset di sebelah kiri, lalu klik <strong>Predict Training Time</strong>.</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- ===== Tips Section ===== -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="ts-tips-card">
+                    <h5 class="mb-3"><i class="bi bi-lightbulb-fill me-2 text-warning"></i>Tips Penggunaan</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="tip-item">
+                                <i class="bi bi-check2-circle text-success me-2"></i>
+                                Masukkan angka positif yang valid (lebih dari 0)
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="tip-item">
+                                <i class="bi bi-check2-circle text-success me-2"></i>
+                                Hasil paling akurat dalam rentang data training
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="tip-item">
+                                <i class="bi bi-check2-circle text-success me-2"></i>
+                                Estimasi merupakan perkiraan, bukan jaminan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+{% if result %}
+<script>
+(function() {
+    // Data from Flask
+    const scatterX = {{ chart.scatter_x | tojson }};
+    const scatterY = {{ chart.scatter_y | tojson }};
+    const coef      = {{ chart.coef }};
+    const intercept = {{ chart.intercept }};
+    const xMin      = {{ chart.x_min }};
+    const xMax      = {{ chart.x_max }};
+    const predX     = {{ result.dataset_size }};
+    const predY     = {{ result.pred_minutes }};
+
+    // Regression line points
+    const lineX = [xMin, xMax];
+    const lineY = lineX.map(x => intercept + coef * x);
+
+    const ctx = document.getElementById('predChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Actual Data',
+                    data: scatterX.map((x, i) => ({ x, y: scatterY[i] })),
+                    backgroundColor: 'rgba(79,70,229,0.40)',
+                    borderColor: 'rgba(79,70,229,0.7)',
+                    borderWidth: 1.5,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    clip: false,
+                    order: 3,
+                },
+                {
+                    label: 'Regression Line',
+                    data: lineX.map((x, i) => ({ x, y: lineY[i] })),
+                    type: 'line',
+                    borderColor: '#06B6D4',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    clip: false,
+                    order: 2,
+                },
+                {
+                    label: `Your Prediction (${predX} MB → ${predY} min)`,
+                    data: [{ x: predX, y: predY }],
+                    backgroundColor: '#F97316',
+                    borderColor: '#fff',
+                    borderWidth: 2.5,
+                    pointRadius: 11,
+                    pointHoverRadius: 14,
+                    pointStyle: 'star',
+                    clip: false,
+                    order: 1,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#0F172A', font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' }, padding: 16 }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.9)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    callbacks: {
+                        label: ctx => `${ctx.dataset.label}: (${ctx.parsed.x.toFixed(1)} MB, ${ctx.parsed.y.toFixed(2)} min)`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Dataset Size (MB)', color: '#475569', font: { weight: '600', size: 11 } },
+                    ticks: { color: '#64748B', font: { size: 11 } },
+                    grid:  { color: 'rgba(79,70,229,0.07)' },
+                    border: { color: 'rgba(79,70,229,0.20)', width: 1.5 }
+                },
+                y: {
+                    title: { display: true, text: 'Training Time (Minutes)', color: '#475569', font: { weight: '600', size: 11 } },
+                    ticks: { color: '#64748B', font: { size: 11 } },
+                    grid:  { color: 'rgba(79,70,229,0.07)' },
+                    border: { color: 'rgba(79,70,229,0.20)', width: 1.5 }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endif %}
+
+<script>
+// Loading animation on form submit
+document.getElementById('predictForm').addEventListener('submit', function(e) {
+    const sizeInput = document.getElementById('dataset_size');
+    const val = parseFloat(sizeInput.value);
+    if (!sizeInput.value || isNaN(val) || val <= 0) {
+        e.preventDefault();
+        return;
+    }
+    const btn = document.getElementById('predictBtn');
+    btn.querySelector('.btn-text').classList.add('d-none');
+    btn.querySelector('.btn-loading').classList.remove('d-none');
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

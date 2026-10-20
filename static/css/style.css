@@ -1,0 +1,2331 @@
+/* ============================================================
+   TrainSight — style.css
+   Premium AI SaaS — Global Gradient + Glassmorphism
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+/* ──────────────────────────────────────
+   CSS Custom Properties
+   ────────────────────────────────────── */
+:root {
+    /* Brand Colors */
+    --primary: #4F46E5;
+    --primary-dark: #3730A3;
+    --primary-light: #6366F1;
+    --accent: #7C3AED;
+    --accent-light: #8B5CF6;
+    --cyan: #06B6D4;
+    --green: #10B981;
+    --orange: #F59E0B;
+    --red: #EF4444;
+    --pink: #EC4899;
+
+    /* Global Background — persistent gradient */
+    --global-bg: linear-gradient(160deg,
+            #F8F6FF 0%,
+            #EDE8FF 15%,
+            #E0EEFF 32%,
+            #F0F9FF 50%,
+            #FAF5FF 65%,
+            #EEF2FF 80%,
+            #F0FDFF 100%);
+
+    /* Surface (kept for reference only, use glass vars) */
+    --bg: #F8F6FF;
+    --bg-subtle: rgba(255, 255, 255, 0.55);
+    --bg-muted: rgba(240, 236, 255, 0.60);
+    --surface: rgba(255, 255, 255, 0.72);
+    --surface-2: rgba(255, 255, 255, 0.55);
+
+    /* Text */
+    --text: #1E1B4B;
+    --text-muted: #4C4580;
+    --text-dim: #8B83C4;
+
+    /* Borders */
+    --border: rgba(79, 70, 229, 0.20);
+    --border-light: rgba(79, 70, 229, 0.09);
+    --border-solid: rgba(139, 130, 196, 0.30);
+
+    /* ── Realistic Glassmorphism System ── */
+    /* Frosted glass backgrounds */
+    --glass-white: rgba(255, 255, 255, 0.58);
+    --glass-white-2: rgba(255, 255, 255, 0.72);
+    --glass-white-3: rgba(255, 255, 255, 0.85);
+    --glass-tinted: rgba(237, 232, 255, 0.50);
+
+    /* Frosted glass borders — white edge gives the glass look */
+    --glass-edge: 1.5px solid rgba(255, 255, 255, 0.82);
+    --glass-ring: 0 0 0 1px rgba(79, 70, 229, 0.12);
+
+    /* Blur levels */
+    --blur-xs: blur(8px);
+    --blur-sm: blur(14px);
+    --blur-md: blur(20px);
+    --blur-lg: blur(28px);
+
+    /* Glass shadows — colored ambient */
+    --glass-shadow-sm: 0 4px 16px rgba(79, 70, 229, 0.10),
+        0 1px 4px rgba(79, 70, 229, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    --glass-shadow: 0 8px 32px rgba(79, 70, 229, 0.13),
+        0 2px 8px rgba(79, 70, 229, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    --glass-shadow-md: 0 12px 40px rgba(79, 70, 229, 0.16),
+        0 3px 10px rgba(124, 58, 237, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    --glass-shadow-hover: 0 20px 60px rgba(79, 70, 229, 0.22),
+        0 4px 14px rgba(124, 58, 237, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    /* Legacy aliases */
+    --glass-bg: var(--glass-white);
+    --glass-bg-2: var(--glass-white-2);
+    --glass-border: var(--glass-edge);
+    --glass-blur: var(--blur-sm);
+    --glass-blur-sm: var(--blur-xs);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(79, 70, 229, 0.09);
+    --shadow: 0 6px 28px rgba(79, 70, 229, 0.12);
+    --shadow-lg: 0 14px 52px rgba(79, 70, 229, 0.17);
+    --shadow-xl: 0 22px 64px rgba(79, 70, 229, 0.22);
+
+    /* Glow */
+    --glow: rgba(79, 70, 229, 0.24);
+    --glow-accent: rgba(124, 58, 237, 0.24);
+    --glow-cyan: rgba(6, 182, 212, 0.22);
+    --glow-pink: rgba(236, 72, 153, 0.18);
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    /* Transition */
+    --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ──────────────────────────────────────
+   Reset & Base
+   ────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* ── Global persistent gradient background ── */
+    background: var(--global-bg);
+    background-attachment: fixed;
+    /* stays put on scroll */
+    min-height: 100vh;
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+}
+
+/* ── Global ambient glow orbs (behind everything) ── */
+body::before,
+body::after {
+    content: '';
+    position: fixed;
+    /* fixed = stays through scroll */
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+body::before {
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle,
+            rgba(139, 92, 246, 0.18) 0%,
+            rgba(99, 102, 241, 0.12) 40%,
+            transparent 70%);
+    top: -200px;
+    left: -200px;
+    filter: blur(60px);
+    animation: ambientDrift1 20s ease-in-out infinite alternate;
+}
+
+body::after {
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle,
+            rgba(6, 182, 212, 0.14) 0%,
+            rgba(79, 70, 229, 0.10) 40%,
+            transparent 70%);
+    bottom: -100px;
+    right: -100px;
+    filter: blur(55px);
+    animation: ambientDrift2 24s ease-in-out infinite alternate;
+}
+
+@keyframes ambientDrift1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(80px, 60px) scale(1.1);
+    }
+
+    100% {
+        transform: translate(40px, 120px) scale(0.95);
+    }
+}
+
+@keyframes ambientDrift2 {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(-60px, -80px) scale(1.08);
+    }
+
+    100% {
+        transform: translate(-120px, -40px) scale(0.92);
+    }
+}
+
+/* ──────────────────────────────────────
+   Scrollbar
+   ────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(79, 70, 229, 0.25);
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* ──────────────────────────────────────
+   Utility
+   ────────────────────────────────────── */
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 60%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ──────────────────────────────────────
+   NAVBAR
+   ────────────────────────────────────── */
+.ts-navbar {
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 1px 0 rgba(79, 70, 229, 0.10),
+        0 4px 24px rgba(79, 70, 229, 0.06);
+    padding: 0.6rem 0;
+    transition: background var(--transition), box-shadow var(--transition);
+    z-index: 1050;
+}
+
+.ts-navbar.scrolled {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 32px rgba(79, 70, 229, 0.13);
+}
+
+.brand-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #fff;
+    box-shadow: 0 4px 12px var(--glow);
+    flex-shrink: 0;
+}
+
+.brand-icon-sm {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+}
+
+.brand-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    /* inline-block agar padding tidak diabaikan */
+    line-height: 1.3;
+    /* lebih longgar agar teks tidak terpotong */
+    padding: 1px 2px;
+    /* ruang ekstra agar gradient terlihat penuh */
+}
+
+.brand-tag {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.4px;
+}
+
+.ts-nav-link {
+    color: var(--text-muted) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.45rem 0.75rem !important;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition), background var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+.ts-nav-link:hover {
+    color: var(--primary) !important;
+    background: rgba(79, 70, 229, 0.07);
+}
+
+.ts-nav-link.active {
+    color: var(--primary) !important;
+    background: rgba(79, 70, 229, 0.08);
+    font-weight: 600;
+}
+
+.ts-btn-predict {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.45rem 1.1rem !important;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 14px var(--glow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    white-space: nowrap;
+}
+
+.ts-btn-predict:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--glow-accent);
+}
+
+.ts-toggler {
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm) !important;
+    background: transparent;
+    font-size: 1.2rem;
+}
+
+.ts-toggler:focus {
+    box-shadow: none !important;
+}
+
+/* ──────────────────────────────────────
+   MAIN
+   ────────────────────────────────────── */
+.ts-main {
+    padding-top: 64px;
+}
+
+/* ──────────────────────────────────────
+   SECTION
+   ────────────────────────────────────── */
+/* All sections transparent — global body gradient shows through */
+.ts-section {
+    padding: 5rem 0;
+    background: transparent;
+}
+
+.ts-section-alt {
+    background: transparent;
+}
+
+.section-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.18);
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    margin-bottom: 0.8rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.section-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+/* ──────────────────────────────────────
+   HERO
+   ────────────────────────────────────── */
+.ts-hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 0 4rem;
+    background: transparent;
+    /* global body gradient shows through */
+}
+
+/* Animated blobs — lebih kuat dan visible */
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(55px);
+    /* lebih tajam → warna lebih jelas */
+    opacity: 0.65;
+    /* lebih visible */
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform;
+    animation: blobFloat 8s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, #818CF8 0%, #6366F1 50%, #4F46E5 100%);
+    top: -60px;
+    left: -60px;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #06B6D4 0%, #818CF8 60%, #6366F1 100%);
+    bottom: -60px;
+    right: -50px;
+    animation-delay: 2.5s;
+}
+
+.blob-3 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, #F59E0B 0%, #EC4899 70%);
+    top: 40%;
+    left: 35%;
+    animation-delay: 5s;
+    opacity: 0.40;
+}
+
+@keyframes blobFloat {
+    0% {
+        transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+        transform: translate(18px, -12px) scale(1.04);
+    }
+
+    66% {
+        transform: translate(-10px, 14px) scale(0.97);
+    }
+
+    100% {
+        transform: translate(24px, 18px) scale(1.07);
+    }
+}
+
+.ts-hero>.container-xl {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.hero-title {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.hero-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 480px;
+    line-height: 1.7;
+}
+
+/* Buttons */
+.ts-btn-hero-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 6px 24px var(--glow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ts-btn-hero-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 36px var(--glow-accent);
+    color: #fff !important;
+}
+
+.ts-btn-hero-secondary {
+    background: rgba(79, 70, 229, 0.07);
+    color: var(--primary) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: 50px;
+    border: 1.5px solid rgba(79, 70, 229, 0.2);
+    transition: background var(--transition), border-color var(--transition), transform var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ts-btn-hero-secondary:hover {
+    background: rgba(79, 70, 229, 0.14);
+    border-color: var(--primary);
+    color: var(--primary) !important;
+    transform: translateY(-2px);
+}
+
+.ts-btn-ghost {
+    background: transparent;
+    color: var(--primary) !important;
+    border: 1.5px solid rgba(79, 70, 229, 0.25);
+    font-weight: 600;
+    border-radius: 50px;
+    transition: background var(--transition), border-color var(--transition);
+    display: inline-flex;
+    align-items: center;
+}
+
+.ts-btn-ghost:hover {
+    background: rgba(79, 70, 229, 0.08);
+    border-color: var(--primary);
+    color: var(--primary) !important;
+}
+
+.tagline-pill {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+    background: rgba(79, 70, 229, 0.05);
+    border: 1px solid var(--border);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+}
+
+.hero-lottie-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.hero-lottie-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+}
+
+/* ──────────────────────────────────────
+   STAT CARDS — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-stat-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shimmer top-edge highlight */
+.ts-stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 50%, transparent 100%);
+}
+
+.ts-stat-card:hover {
+    transform: translateY(-7px) scale(1.02);
+    box-shadow: var(--glass-shadow-hover), var(--glass-ring);
+}
+
+.stat-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin: 0 auto 1rem;
+}
+
+.stat-blue {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+}
+
+.stat-cyan {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--cyan);
+}
+
+.stat-purple {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--accent);
+}
+
+.stat-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--green);
+}
+
+.stat-num {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+
+.stat-lbl {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ──────────────────────────────────────
+   INFO CARDS — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-info-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.ts-info-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.ts-info-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--glass-shadow-hover), var(--glass-ring);
+}
+
+.info-step {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.info-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(124, 58, 237, 0.12));
+    border: 1.5px solid rgba(79, 70, 229, 0.18);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin: 0 auto 1.2rem;
+}
+
+.info-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+}
+
+.info-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ──────────────────────────────────────
+   GLASS CARD
+   ────────────────────────────────────── */
+.ts-glass-card {
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ts-glass-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.glass-card-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    box-shadow: 0 6px 18px var(--glow);
+}
+
+/* ──────────────────────────────────────
+   FORMULA BOX
+   ────────────────────────────────────── */
+.ts-formula-box {
+    background: rgba(79, 70, 229, 0.05);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: 1.5px solid rgba(79, 70, 229, 0.20);
+    border-radius: var(--radius-md);
+    padding: 1.2rem 1.5rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+.formula-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.formula {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+}
+
+.formula-vars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* ──────────────────────────────────────
+   FEATURE ITEMS
+   ────────────────────────────────────── */
+.feature-item {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+/* ──────────────────────────────────────
+   CTA SECTION
+   ────────────────────────────────────── */
+.ts-cta-section {
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 60%, #6366F1 100%);
+}
+
+.ts-cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%,
+            rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+}
+
+.cta-glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cta-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    position: relative;
+}
+
+.cta-desc {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.ts-cta-section .ts-btn-hero-primary {
+    background: #fff;
+    color: var(--primary) !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.ts-cta-section .ts-btn-hero-primary:hover {
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.2);
+    color: var(--primary-dark) !important;
+}
+
+.ts-cta-section .ts-btn-ghost {
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.ts-cta-section .ts-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
+    color: #fff !important;
+}
+
+/* ──────────────────────────────────────
+   PAGE HEADER — Compact + Glassmorphism
+   ────────────────────────────────────── */
+.ts-page-header {
+    background: transparent;
+    /* global gradient shows through */
+    padding: 2rem 0;
+    /* atas = bawah (2rem) → spacing konsisten */
+    position: relative;
+    overflow: visible;
+}
+
+/* Section tepat di bawah page header: hilangkan padding-top 5rem agar
+   jarak card header → konten = jarak navbar → card header (2rem) */
+.ts-page-header+.ts-section,
+.ts-page-header+.ts-section-alt {
+    padding-top: 0;
+}
+
+/* Subtle background radial glow */
+.ts-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse 70% 100% at 15% 60%,
+            rgba(79, 70, 229, 0.09) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 80% at 85% 30%,
+            rgba(124, 58, 237, 0.06) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+/* Glass card wrapper */
+.ts-page-header .page-header-inner {
+    position: relative;
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-md), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 1.6rem 2rem;
+    overflow: hidden;
+}
+
+/* Decorative gradient top-line inside glass card */
+.ts-page-header .page-header-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    right: 1.5rem;
+    height: 2px;
+    border-radius: 100px;
+    background: linear-gradient(90deg,
+            rgba(79, 70, 229, 0.0) 0%,
+            rgba(79, 70, 229, 0.45) 30%,
+            rgba(124, 58, 237, 0.50) 50%,
+            rgba(6, 182, 212, 0.35) 80%,
+            rgba(6, 182, 212, 0.0) 100%);
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+}
+
+.page-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Page header inner flex layout */
+.ts-page-header .page-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+/* Left content block */
+.ph-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Right decorative element */
+.ph-deco {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ph-deco-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(124, 58, 237, 0.15));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.70);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    color: var(--primary);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+}
+
+.ph-deco-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* Responsive: hide deco on small screens */
+@media (max-width: 576px) {
+    .ph-deco {
+        display: none;
+    }
+}
+
+/* ──────────────────────────────────────
+   PREDICT PAGE — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-predict-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-md), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ts-predict-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.predict-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-solid);
+}
+
+.predict-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    box-shadow: 0 6px 18px var(--glow);
+}
+
+.ts-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.6rem;
+}
+
+.ts-input-group {
+    position: relative;
+}
+
+.ts-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: 1.5px solid rgba(255, 255, 255, 0.80);
+    box-shadow: inset 0 1px 3px rgba(79, 70, 229, 0.06), var(--glass-ring);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.85rem 4rem 0.85rem 1rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    outline: none;
+}
+
+.ts-input:focus {
+    border-color: rgba(79, 70, 229, 0.40);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12), inset 0 1px 3px rgba(79, 70, 229, 0.06);
+    background: rgba(255, 255, 255, 0.90);
+}
+
+.ts-input-error {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.ts-input::placeholder {
+    color: var(--text-dim);
+}
+
+.ts-input::-webkit-outer-spin-button,
+.ts-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.ts-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.ts-input-unit {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary);
+    pointer-events: none;
+}
+
+.ts-input-hint {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+    word-break: break-word;
+    /* FIX: teks tidak terpotong */
+    white-space: normal;
+}
+
+.ts-alert-box {
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.ts-alert-error {
+    background: rgba(239, 68, 68, 0.07);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #B91C1C;
+}
+
+.ts-alert-warning {
+    background: rgba(245, 158, 11, 0.07);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #92400E;
+}
+
+.btn.ts-btn-predict-full {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+    box-shadow: 0 6px 20px var(--glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn.ts-btn-predict-full:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px var(--glow-accent);
+}
+
+.btn.ts-btn-predict-full:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.predict-model-info {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.model-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(79, 70, 229, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 0.3rem 0.8rem;
+}
+
+/* Result card — frosted glass */
+.ts-result-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-md), 0 0 0 1px rgba(79, 70, 229, 0.18);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: resultIn 0.5s ease-out;
+}
+
+.ts-result-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+@keyframes resultIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-header {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.result-time-display {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-minutes {
+    font-size: 3.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.result-unit {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.result-conversion {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.result-conversion strong {
+    color: var(--text);
+}
+
+.result-details {
+    border-top: 1px solid var(--border-solid);
+    padding-top: 1.2rem;
+}
+
+.result-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-size: 0.88rem;
+}
+
+.rd-label {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+.rd-value {
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Empty result */
+.ts-empty-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border: 1.5px dashed rgba(79, 70, 229, 0.25);
+    border-radius: var(--radius-xl);
+    min-height: 320px;
+    box-shadow: var(--glass-shadow-sm);
+}
+
+.ts-empty-result h4 {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.ts-empty-result p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Tips card */
+.ts-tips-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ts-tips-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.tip-item {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+}
+
+/* ──────────────────────────────────────
+   CHART CARD — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-chart-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.ts-chart-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--glass-shadow-hover), var(--glass-ring);
+}
+
+/* Decorative top accent bar on chart cards */
+.ts-chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--cyan));
+    opacity: 0.75;
+    z-index: 2;
+}
+
+/* Canvas wrapper stays inside card */
+.ts-chart-card canvas {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+}
+
+.chart-card-header {
+    margin-bottom: 1.4rem;
+    padding-top: 0.5rem;
+}
+
+.chart-card-header h5 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.text-info {
+    color: var(--primary) !important;
+}
+
+.text-cyan {
+    color: var(--cyan) !important;
+}
+
+.text-purple {
+    color: var(--accent) !important;
+}
+
+.text-warning {
+    color: var(--orange) !important;
+}
+
+.chart-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-top: 2px solid rgba(79, 70, 229, 0.15);
+    padding-top: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+/* ──────────────────────────────────────
+   EVALUATION PAGE — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-metric-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.ts-metric-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--glass-shadow-hover), var(--glass-ring);
+}
+
+.ts-metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.ts-metric-blue::before {
+    background: linear-gradient(90deg, var(--primary), var(--cyan));
+}
+
+.ts-metric-cyan::before {
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+}
+
+.ts-metric-purple::before {
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+}
+
+.ts-metric-green::before {
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+}
+
+.metric-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.ts-metric-blue .metric-icon {
+    color: var(--primary);
+}
+
+.ts-metric-cyan .metric-icon {
+    color: var(--cyan);
+}
+
+.ts-metric-purple .metric-icon {
+    color: var(--accent);
+}
+
+.ts-metric-green .metric-icon {
+    color: var(--green);
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+    word-break: break-all;
+}
+
+.metric-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+
+.metric-fullname {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.metric-unit {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+}
+
+.ts-eval-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ts-eval-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.eval-card-header {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-solid);
+    display: flex;
+    align-items: center;
+}
+
+.eval-card-header i {
+    color: var(--primary);
+}
+
+.ts-eval-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ts-eval-table tr {
+    border-bottom: 1px solid var(--border-solid);
+}
+
+.ts-eval-table tr:last-child {
+    border-bottom: none;
+}
+
+.ts-eval-table td {
+    padding: 0.65rem 0;
+    font-size: 0.9rem;
+}
+
+.ts-eval-table td:first-child {
+    color: var(--text-muted);
+}
+
+.ts-eval-table td:last-child {
+    text-align: right;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.interp-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border-solid);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.interp-item:last-child {
+    border-bottom: none;
+}
+
+.interp-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.1rem;
+}
+
+.interp-blue {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+}
+
+.interp-cyan {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--cyan);
+}
+
+.interp-purple {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--accent);
+}
+
+.interp-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--green);
+}
+
+.metric-desc-item {
+    padding: 0;
+}
+
+.metric-desc-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.metric-desc-blue {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+}
+
+.metric-desc-cyan {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--cyan);
+}
+
+.metric-desc-purple {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--accent);
+}
+
+.metric-desc-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--green);
+}
+
+.metric-desc-item h6 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+}
+
+.metric-desc-item p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ──────────────────────────────────────
+   DATASET PAGE
+   ────────────────────────────────────── */
+.ds-stat-chip {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-sm), var(--glass-ring);
+    border-radius: var(--radius-md);
+    padding: 0.8rem;
+    text-align: center;
+}
+
+.ds-chip-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+}
+
+.ds-chip-val {
+    font-size: 1.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ts-dataset-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-md), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 1.8rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.ts-dataset-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+    z-index: 1;
+}
+
+.dataset-card-header {
+    margin-bottom: 1.5rem;
+}
+
+.ds-search-wrap {
+    position: relative;
+    min-width: 240px;
+}
+
+.ds-search-icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+    font-size: 0.9rem;
+}
+
+.ds-search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: 1.5px solid rgba(255, 255, 255, 0.80);
+    box-shadow: inset 0 1px 2px rgba(79, 70, 229, 0.05), var(--glass-ring);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem 0.5rem 2.2rem;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.ds-search-input:focus {
+    border-color: rgba(79, 70, 229, 0.40);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.10), inset 0 1px 2px rgba(79, 70, 229, 0.05);
+}
+
+.ds-search-input::placeholder {
+    color: var(--text-dim);
+}
+
+.ts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ts-table thead tr {
+    border-bottom: 2px solid rgba(79, 70, 229, 0.15);
+}
+
+.ts-table th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+}
+
+.ts-table td {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border-solid);
+}
+
+.ts-table tbody tr:hover {
+    background: rgba(79, 70, 229, 0.04);
+}
+
+.ts-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.ds-info-text {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.ds-page-label {
+    font-size: 0.85rem;
+    color: var(--text);
+    padding: 0 0.5rem;
+}
+
+.btn.ts-btn-page {
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-sm);
+    color: var(--text);
+    font-size: 0.82rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.btn.ts-btn-page:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    color: var(--primary);
+}
+
+.btn.ts-btn-page:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* ──────────────────────────────────────
+   ABOUT PAGE — Realistic Frosted Glass
+   ────────────────────────────────────── */
+.ts-about-card {
+    background: var(--glass-white-2);
+    backdrop-filter: var(--blur-md);
+    -webkit-backdrop-filter: var(--blur-md);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.ts-about-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.ts-about-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--glass-shadow-hover), var(--glass-ring);
+}
+
+.about-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.about-icon-blue {
+    background: linear-gradient(135deg, var(--primary), var(--cyan));
+    box-shadow: 0 4px 14px var(--glow);
+}
+
+.about-icon-cyan {
+    background: linear-gradient(135deg, var(--cyan), var(--green));
+    box-shadow: 0 4px 14px var(--glow-cyan);
+}
+
+.about-icon-purple {
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    box-shadow: 0 4px 14px var(--glow-accent);
+}
+
+.about-icon-green {
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+}
+
+.about-icon-orange {
+    background: linear-gradient(135deg, var(--orange), #FBBF24);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+}
+
+.ts-about-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+}
+
+.ts-about-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.about-quote {
+    border-left: 3px solid var(--primary);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    background: rgba(79, 70, 229, 0.05);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.about-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about-list li {
+    display: flex;
+    align-items: center;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    padding: 0.3rem 0;
+}
+
+.about-list li i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.about-notice {
+    background: rgba(79, 70, 229, 0.05);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.about-notice i {
+    color: var(--primary);
+    margin-top: 0.05rem;
+    flex-shrink: 0;
+}
+
+.ts-kaggle-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(32, 189, 135, 0.08);
+    border: 1px solid rgba(32, 189, 135, 0.25);
+    color: #059669;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background var(--transition);
+}
+
+.ts-kaggle-link:hover {
+    background: rgba(32, 189, 135, 0.15);
+    color: #047857;
+}
+
+.kaggle-badge {
+    background: #10B981;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 50px;
+    margin-left: 0.3rem;
+}
+
+.ds-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-solid);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.ds-info-row:last-child {
+    border-bottom: none;
+}
+
+.ds-info-row code {
+    background: rgba(79, 70, 229, 0.07);
+    border-radius: var(--radius-sm);
+    padding: 0.15rem 0.45rem;
+    font-size: 0.82rem;
+    color: var(--primary);
+}
+
+.tech-stack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+}
+
+.tech-item {
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-sm);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.tech-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    color: var(--primary);
+}
+
+.tech-item i {
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.quick-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.quick-link-item {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 0.8rem;
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-xs);
+    -webkit-backdrop-filter: var(--blur-xs);
+    border: var(--glass-edge);
+    box-shadow: var(--glass-shadow-sm);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: transform var(--transition), box-shadow var(--transition), color var(--transition);
+}
+
+.quick-link-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow), var(--glass-ring);
+    color: var(--primary);
+}
+
+/* ──────────────────────────────────────
+   FOOTER — Frosted Glass + Compact
+   ────────────────────────────────────── */
+.ts-footer {
+    background: var(--glass-white);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border-top: 1.5px solid rgba(255, 255, 255, 0.80);
+    box-shadow: 0 -4px 24px rgba(79, 70, 229, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    padding: 1.2rem 0 1rem;
+}
+
+/* Footer top row: brand only */
+.footer-top {
+    display: flex;
+    align-items: center;
+    /* tengahkan vertikal karena lebih tipis */
+    margin-bottom: 0.8rem;
+    /* dari 1.5rem jadi 0.8rem */
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-solid);
+}
+
+.footer-brand-block {
+    display: flex;
+    align-items: center;
+    /* ikon center karena satu baris */
+    gap: 0.75rem;
+}
+
+.footer-brand {
+    font-size: 1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    line-height: 1.3;
+    padding: 1px 2px;
+}
+
+.footer-tag {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    display: inline;
+    /* inline agar satu baris dengan brand */
+    margin-left: 0.4rem;
+}
+
+.footer-desc {
+    display: none;
+    /* hidden di compact footer */
+}
+
+/* Footer bottom row: copyright */
+.footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.footer-copy {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.footer-made {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.footer-made span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* ──────────────────────────────────────
+   ALERTS
+   ────────────────────────────────────── */
+.ts-alert-danger {
+    background: rgba(239, 68, 68, 0.07);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-md);
+    color: #B91C1C;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.9rem;
+}
+
+/* ──────────────────────────────────────
+   AOS-style fade-in animations
+   ────────────────────────────────────── */
+[data-aos].aos-init {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-aos].aos-init[data-aos="fade-right"] {
+    transform: translateX(-30px);
+}
+
+[data-aos].aos-init[data-aos="fade-left"] {
+    transform: translateX(30px);
+}
+
+[data-aos].aos-init[data-aos="zoom-in"] {
+    transform: scale(0.88);
+}
+
+[data-aos].aos-animate {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* ──────────────────────────────────────
+   RESPONSIVE
+   ────────────────────────────────────── */
+@media (max-width: 991px) {
+    .ts-navbar .navbar-collapse {
+        background: var(--glass-white-3);
+        backdrop-filter: var(--blur-md);
+        -webkit-backdrop-filter: var(--blur-md);
+        border: var(--glass-edge);
+        box-shadow: var(--glass-shadow-md), var(--glass-ring);
+        border-radius: var(--radius-lg);
+        padding: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .footer-links {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .ts-hero {
+        padding: 4rem 0 3rem;
+        min-height: auto;
+    }
+
+    .ts-section {
+        padding: 3.5rem 0;
+    }
+
+    .result-minutes {
+        font-size: 2.8rem;
+    }
+
+    .ts-cta-section {
+        padding: 4rem 0;
+    }
+
+    .cta-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tech-stack-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .ts-metric-card {
+        padding: 1.2rem 1rem;
+    }
+
+    .metric-value {
+        font-size: 1.6rem;
+    }
+}

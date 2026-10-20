@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block description %}TrainSight — Estimate your machine learning training time based on dataset size using Linear Regression. Predict Smarter, Train Better.{% endblock %}
+
+{% block content %}
+
+<!-- ======================== HERO ======================== -->
+<section class="ts-hero">
+    <!-- Animated background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container-xl">
+        <div class="row align-items-center g-5">
+
+            <!-- Left: Text + CTA -->
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="hero-badge mb-3">
+                    <i class="bi bi-cpu me-2"></i>Machine Learning · Linear Regression
+                </div>
+                <h1 class="hero-title">
+                    <span class="gradient-text">TrainSight</span>
+                </h1>
+                <p class="hero-subtitle">Machine Learning Training Time Predictor</p>
+                <p class="hero-desc">
+                    Estimate your machine learning training time based on dataset size
+                    using <strong>Linear Regression</strong>. Backed by real data, powered by Scikit-learn.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a href="/predict" class="btn ts-btn-hero-primary">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>Start Prediction
+                    </a>
+                    <a href="/visualization" class="btn ts-btn-hero-secondary">
+                        <i class="bi bi-bar-chart-line-fill me-2"></i>Explore Analytics
+                    </a>
+                </div>
+
+                <!-- Tagline pill -->
+                <div class="tagline-pill mt-4">
+                    <i class="bi bi-stars me-2"></i>
+                    <em>Predict Smarter, Train Better.</em>
+                </div>
+            </div>
+
+            <!-- Right: Lottie Animation -->
+            <div class="col-lg-6 text-center" data-aos="fade-left">
+                <div class="hero-lottie-wrapper">
+                    <dotlottie-wc
+                        src="https://lottie.host/f7b8437a-71c8-4fbb-bc31-9fd3cf267f0c/jNM5llrm7c.lottie"
+                        style="width: 100%; max-width: 480px; height: 420px;"
+                        autoplay loop>
+                    </dotlottie-wc>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ======================== STAT CARDS ======================== -->
+<section class="ts-section">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">
+                <i class="bi bi-activity me-2"></i>Live Model Stats
+            </span>
+            <h2 class="section-title">Dashboard Statistics</h2>
+            <p class="section-desc">Nilai sebenarnya dari dataset dan hasil pelatihan model.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="ts-stat-card" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="stat-icon-wrap stat-blue">
+                        <i class="bi bi-database-fill"></i>
+                    </div>
+                    <div class="stat-num">{{ stats.total_data }}</div>
+                    <div class="stat-lbl">Total Dataset</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="ts-stat-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="stat-icon-wrap stat-cyan">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <div class="stat-num">{{ stats.train_size }}</div>
+                    <div class="stat-lbl">Training Samples</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="ts-stat-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="stat-icon-wrap stat-purple">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div class="stat-num">{{ stats.test_size }}</div>
+                    <div class="stat-lbl">Testing Samples</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="ts-stat-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="stat-icon-wrap stat-green">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <div class="stat-num">{{ stats.r2 }}</div>
+                    <div class="stat-lbl">Model R² Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================== HOW IT WORKS ======================== -->
+<section class="ts-section ts-section-alt">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">
+                <i class="bi bi-gear me-2"></i>How It Works
+            </span>
+            <h2 class="section-title">Bagaimana TrainSight Bekerja</h2>
+            <p class="section-desc">Tiga langkah sederhana untuk mendapatkan estimasi waktu training.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="ts-info-card h-100" data-aos="fade-up" data-aos-delay="0">
+                    <div class="info-step">01</div>
+                    <div class="info-icon">
+                        <i class="bi bi-input-cursor-text"></i>
+                    </div>
+                    <h3 class="info-title">Masukkan Ukuran Dataset</h3>
+                    <p class="info-desc">
+                        Masukkan ukuran dataset dalam satuan Megabyte (MB) yang ingin kamu estimasikan
+                        waktu pelatihannya.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ts-info-card h-100" data-aos="fade-up" data-aos-delay="150">
+                    <div class="info-step">02</div>
+                    <div class="info-icon">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <h3 class="info-title">Model Memproses</h3>
+                    <p class="info-desc">
+                        Model Regresi Linear yang telah dilatih menggunakan data nyata akan memproses
+                        input kamu secara instan.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="ts-info-card h-100" data-aos="fade-up" data-aos-delay="300">
+                    <div class="info-step">03</div>
+                    <div class="info-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3 class="info-title">Dapatkan Estimasi</h3>
+                    <p class="info-desc">
+                        Hasil prediksi waktu training ditampilkan dalam menit beserta konversinya
+                        ke jam dan menit.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================== ABOUT APP ======================== -->
+<section class="ts-section">
+    <div class="container-xl">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-badge mb-3 d-inline-block">
+                    <i class="bi bi-info-circle me-2"></i>About TrainSight
+                </span>
+                <h2 class="section-title text-start">Apa itu TrainSight?</h2>
+                <p class="section-desc text-start mt-3">
+                    <strong>TrainSight</strong> adalah aplikasi web prediksi yang menggunakan model
+                    <strong>Regresi Linear Sederhana</strong> untuk memperkirakan durasi pelatihan
+                    model Machine Learning berdasarkan ukuran dataset.
+                </p>
+                <p class="section-desc text-start mt-2">
+                    Aplikasi ini merupakan implementasi nyata dari riset akademik
+                    <em>"Analisis Pengaruh Ukuran Dataset terhadap Waktu Pelatihan Model Machine Learning
+                    Menggunakan Regresi Linear"</em>.
+                </p>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-sm-6">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Prediksi berbasis model nyata
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Dataset dari Kaggle
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Visualisasi interaktif
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Evaluasi model lengkap
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                <!-- Linear Regression Card -->
+                <div class="ts-glass-card">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="glass-card-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Regresi Linear Sederhana</h4>
+                            <small class="text-muted">Simple Linear Regression</small>
+                        </div>
+                    </div>
+                    <p class="mb-3">
+                        Regresi Linear adalah metode statistik untuk memodelkan hubungan
+                        <strong>linear</strong> antara variabel independen (X) dan variabel dependen (Y).
+                    </p>
+                    <div class="ts-formula-box">
+                        <span class="formula-label">Persamaan Model:</span>
+                        <span class="formula">Y = a + bX</span>
+                        <div class="formula-vars mt-2">
+                            <span><strong>Y</strong> = Waktu Training (menit)</span>
+                            <span><strong>X</strong> = Ukuran Dataset (MB)</span>
+                            <span><strong>a</strong> = Intercept</span>
+                            <span><strong>b</strong> = Koefisien</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <p class="mb-0 small text-muted">
+                            <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+                            Estimasi waktu training membantu merencanakan resource komputasi
+                            dan mengoptimalkan pipeline ML secara keseluruhan.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================== CTA BANNER ======================== -->
+<section class="ts-cta-section">
+    <div class="container-xl text-center">
+        <div class="cta-glow"></div>
+        <h2 class="cta-title" data-aos="fade-up">Siap untuk memprediksi?</h2>
+        <p class="cta-desc" data-aos="fade-up" data-aos-delay="100">
+            Masukkan ukuran dataset dan dapatkan estimasi waktu training sekarang.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="200">
+            <a href="/predict" class="btn ts-btn-hero-primary btn-lg">
+                <i class="bi bi-lightning-charge-fill me-2"></i>Start Prediction
+            </a>
+            <a href="/about" class="btn ts-btn-ghost btn-lg">
+                <i class="bi bi-book me-2"></i>Learn More
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

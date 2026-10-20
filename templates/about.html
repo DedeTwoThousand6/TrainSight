@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+{% block description %}Tentang TrainSight — aplikasi prediksi waktu training Machine Learning menggunakan Regresi Linear Sederhana.{% endblock %}
+
+{% block content %}
+
+<section class="ts-page-header">
+    <div class="container-xl">
+        <div class="page-header-inner">
+            <div class="ph-content">
+                <span class="section-badge">
+                    <i class="bi bi-info-circle me-2"></i>About
+                </span>
+                <h1 class="page-title">About TrainSight</h1>
+                <p class="page-desc">Mengenal lebih dekat TrainSight dan latar belakang penelitiannya.</p>
+            </div>
+            <div class="ph-deco" aria-hidden="true">
+                <div class="ph-deco-icon">
+                    <i class="bi bi-cpu-fill"></i>
+                </div>
+                <div class="ph-deco-label">TrainSight</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ts-section">
+    <div class="container-xl">
+        <div class="row g-5">
+
+            <!-- Left Column -->
+            <div class="col-lg-7">
+
+                <!-- About the App -->
+                <div class="ts-about-card mb-4">
+                    <div class="about-card-icon about-icon-blue">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                    <h3>About TrainSight</h3>
+                    <p>
+                        <strong>TrainSight</strong> adalah aplikasi web prediksi yang dirancang untuk
+                        memperkirakan durasi pelatihan model Machine Learning berdasarkan ukuran dataset
+                        menggunakan algoritma <strong>Regresi Linear Sederhana</strong>.
+                    </p>
+                    <p>
+                        Aplikasi ini menggunakan model yang benar-benar dilatih menggunakan dataset nyata
+                        dari Kaggle, dibangun dengan <strong>Flask</strong> (backend) dan
+                        <strong>Scikit-learn</strong> (machine learning), serta antarmuka yang modern
+                        dan responsif.
+                    </p>
+                </div>
+
+                <!-- Research Background -->
+                <div class="ts-about-card mb-4">
+                    <div class="about-card-icon about-icon-cyan">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+                    <h3>Research Background</h3>
+                    <p>
+                        Penelitian ini bertujuan menganalisis hubungan antara
+                        <strong>ukuran dataset pelatihan</strong> (dalam MB) dan
+                        <strong>waktu yang dibutuhkan</strong> untuk melatih model Machine Learning (dalam menit).
+                    </p>
+                    <p>
+                        Semakin besar ukuran dataset, umumnya semakin lama waktu yang diperlukan untuk training.
+                        Hubungan ini dapat dimodelkan secara matematis menggunakan Regresi Linear, yang
+                        memungkinkan prediksi waktu training sebelum proses pelatihan dimulai.
+                    </p>
+                    <blockquote class="about-quote">
+                        <em>"Analisis Pengaruh Ukuran Dataset terhadap Waktu Pelatihan Model Machine
+                        Learning Menggunakan Regresi Linear"</em>
+                    </blockquote>
+                </div>
+
+                <!-- Linear Regression Method -->
+                <div class="ts-about-card mb-4">
+                    <div class="about-card-icon about-icon-purple">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3>Machine Learning Method</h3>
+                    <p>
+                        <strong>Regresi Linear Sederhana</strong> adalah metode statistik yang memodelkan
+                        hubungan antara satu variabel independen (X) dan satu variabel dependen (Y).
+                    </p>
+                    <div class="ts-formula-box my-3">
+                        <span class="formula-label">Persamaan Regresi Linear:</span>
+                        <span class="formula">Y = a + bX</span>
+                        <div class="formula-vars mt-2">
+                            <span><strong>Y</strong> = Training Time (minutes)</span>
+                            <span><strong>X</strong> = Dataset Size (MB)</span>
+                            <span><strong>a</strong> = Intercept (titik potong sumbu Y)</span>
+                            <span><strong>b</strong> = Koefisien (kemiringan garis)</span>
+                        </div>
+                    </div>
+                    <p>
+                        Parameter <strong>a</strong> dan <strong>b</strong> diperoleh dari proses training
+                        menggunakan metode <em>Ordinary Least Squares (OLS)</em> yang meminimalkan jumlah
+                        kuadrat residual.
+                    </p>
+                </div>
+
+                <!-- Model Limitations -->
+                <div class="ts-about-card">
+                    <div class="about-card-icon about-icon-orange">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <h3>Model Limitations</h3>
+                    <p>
+                        Perlu dipahami bahwa durasi pelatihan model Machine Learning dipengaruhi oleh
+                        banyak faktor, antara lain:
+                    </p>
+                    <ul class="about-list">
+                        <li><i class="bi bi-dot"></i> Jenis algoritma ML yang digunakan</li>
+                        <li><i class="bi bi-dot"></i> Spesifikasi CPU/GPU perangkat</li>
+                        <li><i class="bi bi-dot"></i> Jumlah epoch pelatihan</li>
+                        <li><i class="bi bi-dot"></i> Kompleksitas arsitektur model</li>
+                        <li><i class="bi bi-dot"></i> Konfigurasi hyperparameter</li>
+                        <li><i class="bi bi-dot"></i> Ketersediaan memori (RAM/VRAM)</li>
+                    </ul>
+                    <div class="about-notice mt-3">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Hasil aplikasi ini merupakan <strong>estimasi</strong> berdasarkan pola dataset,
+                        bukan jaminan durasi training pada semua perangkat dan konfigurasi.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-lg-5">
+
+                <!-- Dataset Source -->
+                <div class="ts-about-card mb-4">
+                    <div class="about-card-icon about-icon-green">
+                        <i class="bi bi-database-fill"></i>
+                    </div>
+                    <h3>Dataset Source</h3>
+                    <p>Dataset yang digunakan dalam penelitian ini berasal dari Kaggle:</p>
+                    <a href="https://www.kaggle.com/datasets/pushpjeetcholkar/training-data-vs-training-time"
+                       target="_blank" rel="noopener noreferrer" class="ts-kaggle-link">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>
+                        Training Data vs Training Time
+                        <span class="kaggle-badge">Kaggle</span>
+                    </a>
+                    <div class="about-dataset-info mt-3">
+                        <div class="ds-info-row">
+                            <span>Variabel X (Input)</span>
+                            <span><code>training_data_size_mb</code></span>
+                        </div>
+                        <div class="ds-info-row">
+                            <span>Variabel Y (Output)</span>
+                            <span><code>training_time_minutes</code></span>
+                        </div>
+                        <div class="ds-info-row">
+                            <span>Jumlah Data Awal</span>
+                            <span>300 baris</span>
+                        </div>
+                        <div class="ds-info-row">
+                            <span>Setelah Preprocessing</span>
+                            <span>299 baris</span>
+                        </div>
+                        <div class="ds-info-row">
+                            <span>Test Size</span>
+                            <span>30% (random_state=101)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tech Stack -->
+                <div class="ts-about-card mb-4">
+                    <div class="about-card-icon about-icon-cyan">
+                        <i class="bi bi-stack"></i>
+                    </div>
+                    <h3>Technology Stack</h3>
+                    <div class="tech-stack-grid">
+                        <div class="tech-item">
+                            <i class="bi bi-filetype-py"></i>
+                            <span>Python</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-server"></i>
+                            <span>Flask</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-cpu"></i>
+                            <span>Scikit-learn</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-table"></i>
+                            <span>Pandas</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                            <span>NumPy</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-bar-chart-fill"></i>
+                            <span>Chart.js</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-bootstrap"></i>
+                            <span>Bootstrap 5</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="bi bi-save"></i>
+                            <span>Joblib</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="ts-about-card">
+                    <div class="about-card-icon about-icon-blue">
+                        <i class="bi bi-link-45deg"></i>
+                    </div>
+                    <h3>Quick Links</h3>
+                    <div class="quick-links">
+                        <a href="/predict" class="quick-link-item">
+                            <i class="bi bi-lightning-charge-fill me-2"></i>Start Prediction
+                            <i class="bi bi-arrow-right ms-auto"></i>
+                        </a>
+                        <a href="/visualization" class="quick-link-item">
+                            <i class="bi bi-bar-chart-line me-2"></i>Data Visualization
+                            <i class="bi bi-arrow-right ms-auto"></i>
+                        </a>
+                        <a href="/evaluation" class="quick-link-item">
+                            <i class="bi bi-graph-up-arrow me-2"></i>Model Evaluation
+                            <i class="bi bi-arrow-right ms-auto"></i>
+                        </a>
+                        <a href="/dataset" class="quick-link-item">
+                            <i class="bi bi-table me-2"></i>Explore Dataset
+                            <i class="bi bi-arrow-right ms-auto"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
